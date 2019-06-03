@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -40,6 +42,8 @@ public class RpgController implements Serializable {
 	
 	private String rpgPreloaded;
 	private Map<String,Object> rpgPreloadedValues;
+	
+	private String elapsedTime;
 	
 	@PostConstruct
 	public void initPreloadedContent() {
@@ -102,7 +106,10 @@ public class RpgController implements Serializable {
 		PrintStream ps = new PrintStream(baos);
 		PrintStream old = System.out;
 		System.setOut(ps);
+		Instant beginOperation = Instant.now();
 		commandLineProgram.singleCall(parms);
+		Instant endOperation = Instant.now();
+		calculateElapsedTime(beginOperation, endOperation);
 		System.out.flush();
 		System.setOut(old);
 		response = baos.toString();
@@ -135,6 +142,26 @@ public class RpgController implements Serializable {
 	public void valueChangeMethod(AjaxBehaviorEvent abe){
 		String preloadedRpg = (String) ((UIOutput)abe.getSource()).getValue();
 		setRpgContent(preloadedRpg); 
+	}
+	
+	private void calculateElapsedTime(final Instant beginOperation, final Instant endOperation) {
+		Duration duration = Duration.between(beginOperation, endOperation);
+		setElapsedTime("Started: " + beginOperation.toString() + "<br>Ended: " + endOperation + "<br>Elapsed: " + humanReadableFormat(duration));
+	}
+
+	public void setElapsedTime(String elapsedTime) {
+		this.elapsedTime = elapsedTime;
+	}
+
+	public String getElapsedTime() {
+		return elapsedTime;
+	}
+	
+	public static String humanReadableFormat(Duration duration) {
+	    return duration.toString()
+	            .substring(2)
+	            .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+	            .toLowerCase();
 	}
 
 }

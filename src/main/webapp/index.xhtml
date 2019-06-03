@@ -11,29 +11,38 @@
 <h:body>
 	<h:form>
 		<h:panelGrid columns="2">
-			<h3>Preloaded samples rpgle source:</h3>
+			<h4>Rpgle sources samples:</h4>
 			<h:selectOneMenu value="#{rpgController.rpgPreloaded}">
 				<f:selectItems value="#{rpgController.rpgPreloadedValue}" />
 				<f:ajax listener="#{rpgController.valueChangeMethod}"
 					execute="@form" render="inputText outputText" />
 			</h:selectOneMenu>
 
-			<h3>Paste an rpgle source:</h3>
-			<h:inputTextarea id="inputText" cols="100" rows="30"
+			<h4>Paste an rpgle source:</h4>
+			<h:inputTextarea id="inputText" cols="100" rows="25"
 				value="#{rpgController.rpgContent}"></h:inputTextarea>
 
-			<h3>Parameters (pipe separated):</h3>
+			<h4>Parameters (pipe separated):</h4>
 			<h:inputText size="100" value="#{rpgController.rpgParmList}"></h:inputText>
 
+			<h4>Action:</h4>
 			<h:commandButton value="RUN INTERPRETER"
 				actionListener="#{rpgController.interpretate()}">
-				<f:ajax execute="@form" render="outputText" />
+				<f:ajax execute="@form" render="outputText elapsedText"/>
 			</h:commandButton>
+			
+			
+		<h4 style="color: red;">Output:</h4>
+		<h:outputLabel id="outputText"
+			value="#{rpgController.interpretationOutput}" style="color: red;"></h:outputLabel>
+			
+		<h4 style="color: green;">Execution time:</h4>
+		<h:outputLabel id="elapsedText" escape="false"
+			value="#{rpgController.elapsedTime}" style="color: green;"></h:outputLabel>
+			
 		</h:panelGrid>
 
-		<h3>Enjoy the output:</h3>
-		<h:outputText id="outputText"
-			value="#{rpgController.interpretationOutput}"></h:outputText>
+		
 
 	</h:form>
 </h:body>
