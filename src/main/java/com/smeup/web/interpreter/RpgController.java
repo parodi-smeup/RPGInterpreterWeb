@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -53,8 +54,9 @@ public class RpgController implements Serializable {
 		
 		rpgPreloadedValues = new LinkedHashMap<String,Object>();
 		rpgPreloadedValues.put("", "");
-		rpgPreloadedValues.put("Hello world", HardcodedRPG.HELLOWORLD);
-		rpgPreloadedValues.put("Fibonacci", HardcodedRPG.FIBONACCI);
+		rpgPreloadedValues.put("Hello world", HardcodedRPG.HELLOWORLD.getSource());
+		rpgPreloadedValues.put("Fibonacci", HardcodedRPG.FIBONACCI.getSource());
+		//rpgPreloadedValues.put("JD_001B", HardcodedRPG.JD_001B.getSource());
 	}
 
 	public Map<String,Object> getRpgPreloadedValue() {
@@ -124,7 +126,8 @@ public class RpgController implements Serializable {
 	private String createTmpRpgleSourceFile(final String content) {
 		String fileName = "";
 		try {
-			File temp = File.createTempFile("tempRpgFile", ".rpgle");
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			File temp = File.createTempFile("tempRpgFile"+timestamp.getTime(), ".rpgle");
 			BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
 			bw.write(content);
 			bw.close();
