@@ -1,4 +1,4 @@
-package com.smeup.jsf.interpreter;
+package com.smeup.web.interpreter;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import com.smeup.rpgparser.CommandLineProgram;
 import com.smeup.rpgparser.RunnerKt;
+import com.smeup.rpgparser.jvminterop.JavaSystemInterface;
 
 @Named
 @RequestScoped
@@ -47,10 +48,13 @@ public class RpgController implements Serializable {
 	
 	@PostConstruct
 	public void initPreloadedContent() {
+		// load all Jd_* programs (a java programm called as an RPG from an interpreted RPG)
+		JavaSystemInterface.INSTANCE.addJavaInteropPackage("com.smeup.jd");
+		
 		rpgPreloadedValues = new LinkedHashMap<String,Object>();
-		rpgPreloadedValues.put("...", "");
-		rpgPreloadedValues.put("Hello world", rpgSource.helloWorld());
-		rpgPreloadedValues.put("Fibonacci", rpgSource.fibonacci());
+		rpgPreloadedValues.put("", "");
+		rpgPreloadedValues.put("Hello world", HardcodedRPG.HELLOWORLD);
+		rpgPreloadedValues.put("Fibonacci", HardcodedRPG.FIBONACCI);
 	}
 
 	public Map<String,Object> getRpgPreloadedValue() {
