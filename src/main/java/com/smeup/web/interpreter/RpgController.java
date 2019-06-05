@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
@@ -49,9 +50,6 @@ public class RpgController implements Serializable {
 	
 	@PostConstruct
 	public void initPreloadedContent() {
-		// load all Jd_* programs (a java programm called as an RPG from an interpreted RPG)
-		JavaSystemInterface.INSTANCE.addJavaInteropPackage("com.smeup.jd");
-		
 		rpgPreloadedValues = new LinkedHashMap<String,Object>();
 		rpgPreloadedValues.put("", "");
 		rpgPreloadedValues.put("Hello world", HardcodedRPG.HELLOWORLD.getSource());
@@ -85,16 +83,32 @@ public class RpgController implements Serializable {
 	
 	public void interpretate() {
 
-		final String rpgfileName = createTmpRpgleSourceFile(getRpgContent());
-		commandLineProgram = RunnerKt.getProgram(rpgfileName);
-		commandLineProgram.setTraceMode(false);
+		boolean echo = true;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream  ps = new PrintStream(baos);
 
+		JavaSystemInterface javaSystemInterface = new JavaSystemInterface(ps);
+		javaSystemInterface.addJavaInteropPackage("com.smeup.jd");
+	    
+		//RPG to intepretate
+		final String rpgfileName = createTmpRpgleSourceFile(getRpgContent());
+
+		//Optional Parms of RPG to intepretate
 		List<String> parms = new ArrayList<String>();
 		if(null != getRpgParmList() && !"".equals(getRpgParmList())) {
 			String[] splitted = getRpgParmList().split("\\|");
 			parms = Arrays.asList(splitted);
 		}
-		String response = executeRunnerKt(parms);
+		
+		commandLineProgram = RunnerKt.getProgram(rpgfileName, javaSystemInterface);
+		commandLineProgram.setTraceMode(false);
+		commandLineProgram.singleCall(parms);
+	
+		String response = "";
+	    if (echo) {
+	    	response = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+	    }
+	
 		setInterpretationOutput(response);
 	}
 
