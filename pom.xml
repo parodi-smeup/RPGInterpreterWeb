@@ -84,12 +84,12 @@
 		<dependency>
 			<groupId>com.github.smeup.smeup-rpg</groupId>
 			<artifactId>rpgJavaInterpreter-core</artifactId>
-			<version>fb228eb</version>
+			<version>efda870</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.smeup.smeup-rpg</groupId>
 			<artifactId>examples</artifactId>
-			<version>fb228eb</version>
+			<version>efda870</version>
 		</dependency>
 
 	</dependencies>

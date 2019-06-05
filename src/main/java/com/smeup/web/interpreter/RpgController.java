@@ -1,20 +1,11 @@
 package com.smeup.web.interpreter;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.sql.Timestamp;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -46,17 +37,15 @@ public class RpgController implements Serializable {
 	private Map<String,Object> rpgPreloadedValues;
 	
 	private String elapsedTime;
-	
 	@PostConstruct
 	public void initPreloadedContent() {
 		// load all Jd_* programs (a java programm called as an RPG from an interpreted RPG)
-		JavaSystemInterface.INSTANCE.addJavaInteropPackage("com.smeup.jd");
-		
+
 		rpgPreloadedValues = new LinkedHashMap<String,Object>();
 		rpgPreloadedValues.put("", "");
 		rpgPreloadedValues.put("Hello world", HardcodedRPG.HELLOWORLD.getSource());
 		rpgPreloadedValues.put("Fibonacci", HardcodedRPG.FIBONACCI.getSource());
-		//rpgPreloadedValues.put("JD_001B", HardcodedRPG.JD_001B.getSource());
+		rpgPreloadedValues.put("JD_001B", HardcodedRPG.JD_001B.getSource());
 	}
 
 	public Map<String,Object> getRpgPreloadedValue() {
@@ -84,9 +73,15 @@ public class RpgController implements Serializable {
 	}
 	
 	public void interpretate() {
+		String rpgSource = lineEndingConversion(getRpgContent());
 
-		final String rpgfileName = createTmpRpgleSourceFile(getRpgContent());
-		commandLineProgram = RunnerKt.getProgram(rpgfileName);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+
+		JavaSystemInterface javaSystemInterface = new JavaSystemInterface(ps);
+		javaSystemInterface.addJavaInteropPackage("com.smeup.jd");
+		
+		commandLineProgram = RunnerKt.getProgram(rpgSource, javaSystemInterface);
 		commandLineProgram.setTraceMode(false);
 
 		List<String> parms = new ArrayList<String>();
@@ -94,8 +89,22 @@ public class RpgController implements Serializable {
 			String[] splitted = getRpgParmList().split("\\|");
 			parms = Arrays.asList(splitted);
 		}
-		String response = executeRunnerKt(parms);
+		String response = executeRunnerKt(parms, baos);
+		baos.reset();
 		setInterpretationOutput(response);
+	}
+
+
+	private String lineEndingConversion(String rpgContent) {
+		Scanner scanner = new Scanner(rpgContent);
+		StringBuilder result = new StringBuilder();
+		while (scanner.hasNextLine()) {
+		  String line = scanner.nextLine();
+		  result.append(line);
+		  result.append(System.lineSeparator());
+		}
+		scanner.close();
+		return result.toString();
 	}
 
 	public String getInterpretationOutput() {
@@ -106,36 +115,12 @@ public class RpgController implements Serializable {
 		this.interpretationOutput = interpretationOutput;
 	}
 
-	private String executeRunnerKt(final List<String> parms) {
-		String response = "";
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream ps = new PrintStream(baos);
-		PrintStream old = System.out;
-		System.setOut(ps);
+	private String executeRunnerKt(final List<String> parms, ByteArrayOutputStream baos) {
 		Instant beginOperation = Instant.now();
 		commandLineProgram.singleCall(parms);
 		Instant endOperation = Instant.now();
 		calculateElapsedTime(beginOperation, endOperation);
-		System.out.flush();
-		System.setOut(old);
-		response = baos.toString();
-
-		return response;
-	}
-
-	private String createTmpRpgleSourceFile(final String content) {
-		String fileName = "";
-		try {
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			File temp = File.createTempFile("tempRpgFile"+timestamp.getTime(), ".rpgle");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
-			bw.write(content);
-			bw.close();
-			fileName = temp.getPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return fileName;
+		return new String(baos.toByteArray(), StandardCharsets.UTF_8);
 	}
 
 	public String getRpgPreloaded() {
