@@ -58,7 +58,7 @@
 			<url>http://mauer.smeup.com/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>javax.faces</groupId>
@@ -82,6 +82,11 @@
 			<groupId>com.github.smeup.smeup-rpg</groupId>
 			<artifactId>examples</artifactId>
 			<version>master-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.smeup</groupId>
+			<artifactId>RPGasJAVA</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
