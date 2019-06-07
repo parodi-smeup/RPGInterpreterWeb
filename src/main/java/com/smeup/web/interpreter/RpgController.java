@@ -53,10 +53,6 @@ public class RpgController implements Serializable {
 		return rpgPreloadedValues;
 	}
 
-	public String getFavCoffee2() {
-		return rpgPreloaded;
-	}
-
 	public String getRpgContent() {
 		return rpgSource.getContent();
 	}
