@@ -147,7 +147,7 @@ public enum HardcodedRPG {
     		"     C                   EVAL      §§SVAR='http://www.mocky.io/v2/'+            COSTANTE\n" + 
     		"     C                             '5185415ba171ea3a00704eed'                                    \n" + 
     		"      *\n" + 
-    		"     C                   CALL      'Jd_url'\n" + 
+    		"     C                   CALL      'JD_URL'\n" + 
     		"     C                   PARM                    §§FUNZ\n" + 
     		"     C                   PARM                    §§METO\n" + 
     		"     C                   PARM                    §§SVAR\n" + 

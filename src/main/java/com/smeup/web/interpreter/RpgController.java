@@ -77,7 +77,7 @@ public class RpgController implements Serializable {
 		printStream = new PrintStream(byteArrayOutputStream);
 		javaSystemInterface = new JavaSystemInterface(printStream);
 		
-		// load Jd_url commandLineProgram (a java programm called as an RPG from an interpreted RPG)
+		// load JD_URL commandLineProgram (a java programm called as an RPG from an interpreted RPG)
 		javaSystemInterface.addJavaInteropPackage("com.smeup.jd");
 		commandLineProgram = RunnerKt.getProgram(rpgSource, javaSystemInterface);
 		commandLineProgram.setTraceMode(false);
