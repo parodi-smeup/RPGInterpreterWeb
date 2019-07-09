@@ -79,11 +79,6 @@
 			<version>master-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.smeup.smeup-rpg</groupId>
-			<artifactId>examples</artifactId>
-			<version>master-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>com.smeup</groupId>
 			<artifactId>RPGasJAVA</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
