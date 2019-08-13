@@ -13,8 +13,8 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.smeup.rpgparser.CommandLineProgram;
-import com.smeup.rpgparser.RunnerKt;
+import com.smeup.rpgparser.execution.CommandLineProgram;
+import com.smeup.rpgparser.execution.RunnerKt;
 import com.smeup.rpgparser.jvminterop.JavaSystemInterface;
 
 @Named
